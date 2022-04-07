@@ -1,0 +1,51 @@
+Sub CATMain()
+Dim oSel As Selection
+Set oSel = CATIA.ActiveDocument.Selection
+Dim oSe2 As Selection
+Set oSe2 = CATIA.ActiveDocument.Selection
+Dim Name As String
+iCount = oSel.Count
+ReDim copies(iCount)
+YourFile = "C:\Users\USER\Desktop\Yeni Microsoft Excel Çalışma Sayfası.xlsm"
+Dim EXCEL As Object
+Set EXCEL = CreateObject("Excel.Application")
+EXCEL.workbooks.Open YourFile
+EXCEL.Visible = True
+'Set myworkbook = EXCEL.worksheets.Add
+'MsgBox "Number of shapes found: " & icount
+For A = 1 To iCount
+Set copies(A) = oSel.Item(A).Value
+Next
+For i = 1 To iCount
+'oSel.Item(i).Value.Name
+'Set copies(i) = oSel.Item(i).Value
+'oSel.Add copies(i)
+Name = copies(i).Name
+'MsgBox oSel.Item(i).Value.Name
+oSe2.Search ("Name=" & Name & "*,all")
+Dim ProdDoc
+Set ProdDoc = CATIA.ActiveDocument
+Dim Prod
+Set Prod = ProdDoc.Product
+CATIA.StartCommand ("Measure Inertia")
+Dim Xdim
+Dim Ydim
+Dim Zdim
+Xdim = Prod.Parameters.Item("BBLx").Value
+Ydim = Prod.Parameters.Item("BBLy").Value
+Zdim = Prod.Parameters.Item("BBLz").Value
+Xdim = CStr(Round(Xdim, 0)+10)
+Ydim = CStr(Round(Ydim, 0)+10)
+Zdim = CStr(Round(Zdim, 0)+10)
+EXCEL.Cells(3, 3).Value = Now
+EXCEL.Cells(i + 2, 4).Value = i
+EXCEL.Cells(i + 2, 5).Value = Xdim
+EXCEL.Cells(i + 2, 6).Value = Ydim
+EXCEL.Cells(i + 2, 7).Value = Zdim
+'MsgBox "X = " & Xdim _
+'& vbCr & "Y = " & Ydim _
+'& vbCr & "Z = " & Zdim
+Next
+'MsgBox "seçilen parça sayısı: " & iCount
+'EXCEL.Application.Quit
+End Sub
